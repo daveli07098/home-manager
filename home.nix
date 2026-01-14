@@ -13,8 +13,12 @@
     statix                # linter for Nix code
     deadnix               # find dead code in Nix files
     just                  # optional: nice task runner (Justfile)
+    pre-commit            # git hooks
+
     # AWS
     awscli2
+    # Azure
+    azure-cli
 
     # Kubernetes
     kubectl
@@ -22,10 +26,12 @@
     kustomize
     kubectx     # fast context/namespace switching
     k9s         # terminal UI for kubernetes (highly recommended)
+    argocd
+    flux
     # stern     # multi-pod log tailing (optional)
     # krew      # plugin manager for kubectl (optional)
 
-    # Terraform
+    # Infrastructure as Code
     terraform
     tflint    # linter (optional but very useful)
     tfsec     # security scanner (optional)
@@ -44,6 +50,30 @@
     age           # modern & simple encryption tool (most common with sops)
     # rage        # rust implementation of age (alternative, optional)
     ssh-to-age    # convert ssh pubkey → age pubkey (very useful)
+    keycloak
+
+    # CI/CD & GitOps
+    gh                    # GitHub CLI
+    act                   # local GitHub Actions runner
+
+    # Networking & debugging
+    tcpdump
+    nmap
+    netcat
+    httpie                # modern curl
+    jq yq                 # json/yaml processing
+    mitmproxy             # HTTP/HTTPS proxy
+    ngrok                 # public tunnels
+
+    # Monitoring & observability
+    #grafana               # local dashboard
+    #prometheus
+    #loki                  # log aggregation (optional)
+
+    # Container & registry
+    skopeo                # inspect/copy images
+    dive                  # explore container layers
+    reg                   # simple registry client
 
   ];
 
