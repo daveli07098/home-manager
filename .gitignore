@@ -1,0 +1,4 @@
+# .gitignore
+flake.lock   # optional: some people commit it, others don't (debate exists)
+result       # nix build symlinks
+.direnv/
