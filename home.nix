@@ -1,113 +1,142 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  home.username = "daveli";
+  # ────────────────────────────────────────────────
+  #  Basic user & state settings
+  # ────────────────────────────────────────────────
+  home.username      = "daveli";
   home.homeDirectory = "/Users/daveli";
-  home.stateVersion = "25.11";  # Good choice for recent compatibility
+  home.stateVersion  = "25.11";
 
+  xdg.enable = true;  # enables XDG directories — recommended on macOS
+
+  # ────────────────────────────────────────────────
+  #  Packages – grouped by category
+  # ────────────────────────────────────────────────
   home.packages = with pkgs; [
-    neovim ripgrep fd bat eza fzf git
-    direnv
-    nix-direnv
-    nixfmt-rfc-style      # formatter for .nix files
-    statix                # linter for Nix code
-    deadnix               # find dead code in Nix files
-    just                  # optional: nice task runner (Justfile)
-    pre-commit            # git hooks
+    # ─── Core CLI & productivity ───
+    # neovim                 # main editor
+    # ripgrep                # fast grep alternative (rg)
+    # fd                     # fast find alternative
+    bat                    # cat with syntax highlighting
+    eza                    # modern ls replacement
+    fzf                    # fuzzy finder
+    git                    # version control
 
-    # AWS
-    awscli2
-    # Azure
-    azure-cli
+    just                   # simple task runner (Justfile)
+    httpie                 # modern curl / http client
+    jq                     # json processor
+    yq                     # yaml processor
 
-    # Kubernetes
-    kubectl
-    kubernetes-helm
-    kustomize
-    kubectx     # fast context/namespace switching
-    k9s         # terminal UI for kubernetes (highly recommended)
-    argocd
-    flux
-    # stern     # multi-pod log tailing (optional)
-    # krew      # plugin manager for kubectl (optional)
+    # ─── Nix & linting tools ───
+    nixfmt-rfc-style       # official Nix formatter
+    statix                 # linter for Nix code
+    deadnix                # find dead code in Nix files
+    # alejandra              # alternative Nix formatter
 
-    # Infrastructure as Code
-    terraform
-    tflint    # linter (optional but very useful)
-    tfsec     # security scanner (optional)
-    # terragrunt (optional, if you use it)
+    # ─── Git & hooks ───
+    lefthook               # fast git hooks manager
 
-    # ─── Database CLIs & utils ───
-    postgresql        # includes psql, pg_dump, pg_restore, etc.
-    mongosh           # modern MongoDB shell (replaces mongo shell)
-    mongodb-tools     # mongoimport, mongodump, bsondump, etc.
-    mariadb.client           # mysql client + mysqldump
-    redis             # redis-cli
-    sqlite            # sqlite3 CLI
+    # ─── Shell & scripting ───
+    shellcheck             # linter for shell scripts
+    shfmt                  # shell script formatter
 
-    # ─── Secrets management ───
-    sops
-    age           # modern & simple encryption tool (most common with sops)
-    # rage        # rust implementation of age (alternative, optional)
-    ssh-to-age    # convert ssh pubkey → age pubkey (very useful)
-    keycloak
+    # ─── Cloud & infra CLIs ───
+    awscli2                # AWS command line interface
+    azure-cli              # Microsoft Azure CLI
 
-    # CI/CD & GitOps
-    gh                    # GitHub CLI
-    act                   # local GitHub Actions runner
+    kubectl                # Kubernetes CLI
+    kubernetes-helm        # Helm – Kubernetes package manager (binary version)
+    kustomize              # Kubernetes configuration management
+    kubectx                # fast kubectl context/namespace switching
+    k9s                    # terminal UI for Kubernetes
+    argocd                 # Argo CD CLI (GitOps)
+    # flux                   # Flux CD CLI (GitOps)
 
-    # Networking & debugging
-    tcpdump
-    nmap
-    netcat
-    httpie                # modern curl
-    jq yq                 # json/yaml processing
-    mitmproxy             # HTTP/HTTPS proxy
-    ngrok                 # public tunnels
+    terraform              # infrastructure as code
+    tflint                 # Terraform linter
+    tfsec                  # Terraform security scanner
+    checkov                # IaC security & compliance scanner
+    hadolint               # Dockerfile linter
 
-    # Monitoring & observability
-    #grafana               # local dashboard
-    #prometheus
-    #loki                  # log aggregation (optional)
+    # ─── Databases ───
+    postgresql             # PostgreSQL client (psql, pg_dump, etc.)
+    pgcli                  # nicer interactive PostgreSQL client
+    mongosh                # modern MongoDB shell
+    mongodb-tools          # mongoimport, mongodump, etc.
+    mariadb.client         # MySQL/MariaDB client + mysqldump
+    redis                  # Redis CLI
+    sqlite                 # SQLite CLI (sqlite3)
 
-    # Container & registry
-    skopeo                # inspect/copy images
-    dive                  # explore container layers
-    reg                   # simple registry client
+    # ─── Secrets & security ───
+    sops                   # secrets management (editor + encrypt/decrypt)
+    age                    # modern age encryption (used with sops)
+    ssh-to-age             # convert SSH pubkey → age pubkey
+    # vault                  # HashiCorp Vault CLI
+    keycloak               # identity & access management (OIDC)
 
+    # ─── CI/CD & Git platforms ───
+    gh                     # GitHub CLI
+    act                    # local GitHub Actions runner
+
+    # ─── Networking & debugging ───
+    tcpdump                # network packet analyzer
+    nmap                   # network scanner
+    netcat                 # networking utility
+    mitmproxy              # HTTP/HTTPS proxy & inspector
+    ngrok                  # secure public tunnels
+
+    # ─── Container tools ───
+    skopeo                 # inspect / copy container images
+    dive                   # explore container image layers
+    reg                    # simple container registry client
   ];
 
+  # ────────────────────────────────────────────────
+  #  Programs & integrations
+  # ────────────────────────────────────────────────
   programs = {
-    git.enable = true;
+    # Let Home Manager manage itself + some helpers
+    home-manager.enable = true;
 
-    # ─── Add these two blocks ───
-    home-manager.enable = true;  # Lets HM manage itself + some helpers
+    # Git basic setup
+    git = {
+      enable = true;
+      # Add userName, userEmail, delta, signing, etc. here later
+    };
 
+    # Zsh – shell configuration
     zsh = {
       enable = true;
-      # Optional extras (uncomment as you want)
-      enableCompletion = true;
+
+      # Explicitly lock in current legacy behavior to silence warning
+      dotDir = config.home.homeDirectory;  # ← keeps .zshrc in ~ (current behavior)
+
+      enableCompletion      = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
+
       shellAliases = {
-        hms  = "home-manager switch --flake ~/.config/home-manager";
-        hmg  = "home-manager generations";
-        hmr  = "home-manager generations | head -n 1 | cut -d' ' -f1 | xargs home-manager remove-generations";  # remove oldest if needed
-        hmp  = "home-manager packages";
+        hms     = "home-manager switch --flake ~/.config/home-manager";
+        hmgen   = "home-manager generations";
+        hmr     = "home-manager generations | head -n 1 | cut -d' ' -f1 | xargs home-manager remove-generations";
+        hmpack  = "home-manager packages";
+        hmclean = "nix-collect-garbage -d";
       };
-      
-      # Append your existing custom config at the end
+
       initContent = ''
-        # Source my hand-managed custom zshrc (keep manual edits here)
+        # Source hand-managed custom zshrc (keep manual edits here)
         if [ -f ~/.zshrc.custom ]; then
           source ~/.zshrc.custom
         fi
       '';
     };
+
+    # Direnv – auto-load project environments
     direnv = {
       enable = true;
       nix-direnv.enable = true;
-      # Optional: show a nice message when entering/leaving env
+
       stdlib = ''
         show_file() {
           local file=$1
@@ -118,6 +147,7 @@
 
         show_file ".envrc"
         show_file "flake.nix"
+
         if [[ -n "$DIRENV_ACTIVE" ]]; then
           echo "→ direnv: activated environment"
         fi
@@ -125,9 +155,12 @@
     };
   };
 
-  # Optional: global env vars (HM will export them)
+  # ────────────────────────────────────────────────
+  #  Optional – uncomment when ready
+  # ────────────────────────────────────────────────
   # home.sessionVariables = {
   #   EDITOR = "nvim";
   #   VISUAL = "nvim";
+  #   MANPAGER = "sh -c 'col -bx | bat -l man -p'";
   # };
 }
