@@ -18,6 +18,8 @@
 
     # Kubernetes
     kubectl
+    kubernetes-helm
+    kustomize
     kubectx     # fast context/namespace switching
     k9s         # terminal UI for kubernetes (highly recommended)
     # stern     # multi-pod log tailing (optional)
@@ -28,6 +30,21 @@
     tflint    # linter (optional but very useful)
     tfsec     # security scanner (optional)
     # terragrunt (optional, if you use it)
+
+    # ─── Database CLIs & utils ───
+    postgresql        # includes psql, pg_dump, pg_restore, etc.
+    mongosh           # modern MongoDB shell (replaces mongo shell)
+    mongodb-tools     # mongoimport, mongodump, bsondump, etc.
+    mariadb.client           # mysql client + mysqldump
+    redis             # redis-cli
+    sqlite            # sqlite3 CLI
+
+    # ─── Secrets management ───
+    sops
+    age           # modern & simple encryption tool (most common with sops)
+    # rage        # rust implementation of age (alternative, optional)
+    ssh-to-age    # convert ssh pubkey → age pubkey (very useful)
+
   ];
 
   programs = {
