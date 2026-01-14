@@ -26,6 +26,7 @@
         hms  = "home-manager switch --flake ~/.config/home-manager";
         hmg  = "home-manager generations";
         hmr  = "home-manager generations | head -n 1 | cut -d' ' -f1 | xargs home-manager remove-generations";  # remove oldest if needed
+        hmp  = "home-manager packages";
       };
       
       # Append your existing custom config at the end
