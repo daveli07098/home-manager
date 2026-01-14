@@ -15,7 +15,13 @@
   outputs = { self, nixpkgs, home-manager, ... }:
     let
       system = "aarch64-darwin";
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;                  # ← allow all unfree
+        # Or more precise (only allow terraform):
+        # config.allowUnfreePredicate = pkg:
+        #   builtins.elem (nixpkgs.lib.getName pkg) [ "terraform" ];
+      };    
     in {
       homeConfigurations."daveli" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
