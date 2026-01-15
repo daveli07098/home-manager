@@ -122,11 +122,6 @@
         hmr     = "home-manager generations | head -n 1 | cut -d' ' -f1 | xargs home-manager remove-generations";
         hmpack  = "home-manager packages";
         hmclean = "nix-collect-garbage -d";
-        hmpacklist = ''
-          nix path-info --json --closure-size $(home-manager packages | awk '{print $1}') \
-          | jq -r 'sort_by(.closureSize) | reverse | .[] | [.path, (.closureSize / 1e6 | floor), "MB"] | @tsv' \
-          | column -t -s $'\t'
-        '';
       };
 
       initContent = ''
