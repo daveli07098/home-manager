@@ -90,6 +90,12 @@
     skopeo                 # inspect / copy container images
     dive                   # explore container image layers
     reg                    # simple container registry client
+
+    # ─── Media ───
+    ffmpeg                 # audio/video encoding, decoding, streaming
+
+    # ─── Languages ───
+    python312              # Python 3.12 with pip
   ];
 
   # ────────────────────────────────────────────────
@@ -117,11 +123,13 @@
       syntaxHighlighting.enable = true;
 
       shellAliases = {
-        hms     = "home-manager switch --flake ~/.config/home-manager";
+        hms     = "home-manager switch --flake ~/.config/home-manager && source ~/.zshrc";
         hmgen   = "home-manager generations";
-        hmr     = "home-manager generations | head -n 1 | cut -d' ' -f1 | xargs home-manager remove-generations";
+        hmr     = "home-manager generations | tail -n +4 | awk '{for(i=1;i<=NF;i++) if(\$i~/^[0-9]+\$/) {print \$i; exit}}' | xargs sh -c '[ \$# -gt 0 ] && exec home-manager remove-generations \"\$@\"' sh";
         hmpack  = "home-manager packages";
-        hmclean = "nix-collect-garbage -d";
+        hmreset = "nix-collect-garbage -d";
+
+        skillsync = "~/.config/home-manager/agents-skills/scripts/apply-agents-skills.sh --prune && ~/.config/home-manager/agents-skills/scripts/validate-skills.sh --user";
       };
 
       initContent = ''

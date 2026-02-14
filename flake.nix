@@ -32,8 +32,7 @@
           # You can add more modules here later, e.g. ./modules/git.nix
         ];
 
-        # Optional but useful: pass extra args to all modules if needed
-        # extraSpecialArgs = { inherit self; };  # e.g. if you need flake inputs in modules
+        # extraSpecialArgs = { inherit self; };  # uncomment if a module needs flake self
       };
     };
 }
