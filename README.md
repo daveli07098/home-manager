@@ -64,15 +64,46 @@ Then open a new shell. After that, run `hms` anytime to apply changes.
 
 ---
 
+### 5. (Optional) Import agents skills into Cursor
+
+Sync the bundled skills to Cursor's user directory so the Agent can use them:
+
+```bash
+skillsync
+```
+
+This syncs `agents-skills/.cursor/skills/` to `~/.cursor/skills/`, validates them, and prunes removed skills. Run it after pulling changes to keep your Cursor skills up to date.
+
+---
+
+### 6. (Optional) Migrate Cursor profile to a new device
+
+Export on the source device (writes to `cursor/export/`):
+
+```bash
+./cursor/cursor-profile-export.sh
+```
+
+Transfer the generated tarball from `cursor/export/` to the new device, then import:
+
+```bash
+./cursor/cursor-profile-import.sh cursor-profile-YYYYMMDD.tar.gz
+```
+
+This migrates settings, keybindings, extensions list, and `~/.cursor/skills`. Restart Cursor after import.
+
+---
+
 ## Usage
 
 | Command       | Description              |
 |---------------|--------------------------|
 | `hms`         | Apply config (after symlink) |
 | `hmgen`       | List generations         |
-| `hmr`         | Remove oldest generation |
+| `hmr`         | Keep last 3 generations, remove older |
 | `hmpack`      | List installed packages  |
 | `hmclean`     | Run garbage collection   |
+| `skillsync`   | Sync and validate agents-skills into Cursor |
 
 Without the symlink, use:
 

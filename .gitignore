@@ -1,3 +1,5 @@
 # .gitignore
 result      
 flake.lock
+cursor/export/
+.DS_Store
