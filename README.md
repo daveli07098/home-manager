@@ -90,7 +90,7 @@ Transfer the generated tarball from `cursor/export/` to the new device, then imp
 ./cursor/cursor-profile-import.sh cursor-profile-YYYYMMDD.tar.gz
 ```
 
-This migrates User settings, keybindings, and extensions. Skills are not imported (use `skillsync` for that). Restart Cursor after import.
+This migrates User settings, keybindings, extensions, and skills. Restart Cursor after import.
 
 **Extensions not installing?** Ensure the `cursor` CLI is available:
 - In Cursor: **Cmd+Shift+P** → "Shell Command: Install 'cursor' command in PATH"

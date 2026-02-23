@@ -28,6 +28,14 @@ else
   echo "Warning: $CURSOR_USER not found (skipping)"
 fi
 
+# ─── Skills ───
+if [[ -d "$CURSOR_SKILLS" ]]; then
+  echo "Exporting skills..."
+  cp -R "$CURSOR_SKILLS" "$EXPORT_DIR/"
+else
+  echo "Warning: $CURSOR_SKILLS not found (skipping)"
+fi
+
 # ─── Extensions list ───
 if command -v cursor &>/dev/null; then
   echo "Exporting extensions list (via cursor CLI)..."
@@ -38,8 +46,8 @@ if [[ ! -s "$EXPORT_DIR/extensions.txt" && -d "$CURSOR_EXTENSIONS" ]]; then
   for d in "$CURSOR_EXTENSIONS"/[^.]*; do
     [[ -d "$d" ]] || continue
     name="$(basename "$d")"
-    # Format: publisher.name-version -> publisher.name
-    echo "${name%-*}" >> "$EXPORT_DIR/extensions.txt"
+    # Format: publisher.name-version -> publisher.name (strip -X.Y.Z suffix)
+    echo "$name" | sed -E 's/-[0-9][0-9.]*(-[a-z0-9-]*)?$//' >> "$EXPORT_DIR/extensions.txt"
   done
   sort -u "$EXPORT_DIR/extensions.txt" -o "$EXPORT_DIR/extensions.txt"
 fi

@@ -2,9 +2,7 @@
 # Import Cursor profile from a tarball created by cursor-profile-export.sh
 # Run on new device after transferring the tarball.
 #
-# Imports only: User settings (settings.json, keybindings.json) and extensions.
-# Skills are NOT imported (use skillsync for that); this avoids overwriting
-# skills managed by agents-skills/.
+# Imports: User settings (settings.json, keybindings.json), extensions, and skills.
 #
 # Usage: cursor-profile-import.sh TARBALL
 #   TARBALL  Path to the exported cursor-profile-*.tar.gz file
@@ -24,6 +22,7 @@ if [[ ! -f "$TARBALL" ]]; then
 fi
 
 CURSOR_USER="${HOME}/Library/Application Support/Cursor/User"
+CURSOR_SKILLS="${HOME}/.cursor/skills"
 EXTRACT_DIR="${TMPDIR:-/tmp}/cursor-profile-import-$$"
 trap 'rm -rf "$EXTRACT_DIR"' EXIT
 
@@ -32,7 +31,9 @@ echo "Extracting $TARBALL..."
 tar -xzf "$TARBALL" -C "$EXTRACT_DIR"
 
 IMPORTED_USER=0
-EXT_COUNT=0
+IMPORTED_SKILLS=0
+EXT_ATTEMPTED=0
+EXT_INSTALLED=0
 
 # ─── User settings & keybindings ───
 if [[ -d "$EXTRACT_DIR/User" ]]; then
@@ -40,6 +41,15 @@ if [[ -d "$EXTRACT_DIR/User" ]]; then
   mkdir -p "$CURSOR_USER"
   cp -a "$EXTRACT_DIR/User/." "$CURSOR_USER/"
   IMPORTED_USER=1
+fi
+
+# ─── Skills ───
+if [[ -d "$EXTRACT_DIR/skills" ]]; then
+  echo "Importing skills..."
+  mkdir -p "$(dirname "$CURSOR_SKILLS")"
+  rm -rf "$CURSOR_SKILLS"
+  cp -a "$EXTRACT_DIR/skills" "$CURSOR_SKILLS"
+  IMPORTED_SKILLS=1
 fi
 
 # ─── Extensions ───
@@ -57,18 +67,20 @@ if [[ -f "$EXTRACT_DIR/extensions.txt" && -s "$EXTRACT_DIR/extensions.txt" ]]; t
     echo "    Command Palette (Cmd+Shift+P) → 'Shell Command: Install cursor command in PATH'"
     echo "  Or add to PATH: /Applications/Cursor.app/Contents/Resources/app/bin"
     echo "  Then re-run this script. Or install manually from $EXTRACT_DIR/extensions.txt"
-    EXT_COUNT=$(grep -cv '^[[:space:]]*$' "$EXTRACT_DIR/extensions.txt" 2>/dev/null || echo 0)
+    EXT_ATTEMPTED=$(grep -cv '^[[:space:]]*$' "$EXTRACT_DIR/extensions.txt" 2>/dev/null || echo 0)
   else
     echo "  Tip: Quit Cursor first if installs fail."
     while read -r ext; do
       [[ -z "${ext// }" ]] && continue
-      echo -n "  → $ext ... "
-      if "$CURSOR_CLI" --install-extension "$ext" 2>&1; then
+      ext_id="$(echo "$ext" | sed -E 's/-[0-9][0-9.]*(-[a-z0-9-]*)?$//')"
+      ((EXT_ATTEMPTED++)) || true
+      echo -n "  → $ext_id ... "
+      if "$CURSOR_CLI" --install-extension "$ext_id" 2>&1; then
         echo "ok"
+        ((EXT_INSTALLED++)) || true
       else
         echo "FAILED (check output above)"
       fi
-      ((EXT_COUNT++)) || true
     done < "$EXTRACT_DIR/extensions.txt"
   fi
 fi
@@ -76,6 +88,7 @@ fi
 echo ""
 echo "Profile imported successfully."
 echo "  User settings: $([[ $IMPORTED_USER -eq 1 ]] && echo 'yes' || echo 'no')"
-echo "  Extensions:     $EXT_COUNT"
+echo "  Skills:         $([[ $IMPORTED_SKILLS -eq 1 ]] && echo 'yes' || echo 'no')"
+echo "  Extensions:     $EXT_INSTALLED of $EXT_ATTEMPTED installed"
 echo ""
 echo "Restart Cursor to apply settings and extensions."
