@@ -51,6 +51,7 @@
     kubectx                # fast kubectl context/namespace switching
     k9s                    # terminal UI for Kubernetes
     argocd                 # Argo CD CLI (GitOps)
+    kubeseal                # Sealed Secrets CLI – encrypt K8s secrets for git
     # flux                   # Flux CD CLI (GitOps)
 
     terraform              # infrastructure as code
