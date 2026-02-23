@@ -4,8 +4,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    # Optionally pin to stable: "github:nixos/nixpkgs/nixos-25.11" (or latest stable tag)
-
+    nixpkgs-argocd-fix = {
+      url = "github:nixos/nixpkgs/12f3e06fb8f4bd9db1965b3b24fb0171b75891a0";
+      flake = false;
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
