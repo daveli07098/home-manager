@@ -129,7 +129,9 @@
         hmpack  = "home-manager packages";
         hmreset = "nix-collect-garbage -d";
 
-        skillsync = "~/.config/home-manager/agents-skills/scripts/apply-agents-skills.sh --prune && ~/.config/home-manager/agents-skills/scripts/validate-skills.sh --user";
+        skillsync   = "~/.config/home-manager/agents-skills/scripts/apply-agents-skills.sh --prune && ~/.config/home-manager/agents-skills/scripts/validate-skills.sh --user";
+        cursorexport = "~/.config/home-manager/cursor/cursor-profile-export.sh";
+        cursorimport = "~/.config/home-manager/cursor/cursor-profile-import.sh";
       };
 
       initContent = ''

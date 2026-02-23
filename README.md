@@ -92,6 +92,8 @@ Transfer the generated tarball from `cursor/export/` to the new device, then imp
 
 This migrates User settings, keybindings, extensions, and skills. Restart Cursor after import.
 
+To get a clean extension set before import, run `./cursor/cursor-extensions-clean.sh` first.
+
 **Extensions not installing?** Ensure the `cursor` CLI is available:
 - In Cursor: **Cmd+Shift+P** → "Shell Command: Install 'cursor' command in PATH"
 - Quit Cursor before running the import script
