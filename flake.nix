@@ -14,7 +14,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }:
+  outputs = { self, nixpkgs, nixpkgs-argocd-fix, home-manager, ... }:
     let
       system = "aarch64-darwin";
       pkgs = import nixpkgs {
@@ -23,6 +23,14 @@
         # Or more precise (only allow terraform):
         # config.allowUnfreePredicate = pkg:
         #   builtins.elem (nixpkgs.lib.getName pkg) [ "terraform" ];
+        overlays = [
+          (final: prev: {
+            argocd = (import nixpkgs-argocd-fix {
+              inherit system;
+              config.allowUnfree = true;
+            }).argocd;
+          })
+        ];
       };    
     in {
       homeConfigurations."daveli" = home-manager.lib.homeManagerConfiguration {
