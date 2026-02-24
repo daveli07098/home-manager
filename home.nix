@@ -102,6 +102,7 @@
 
     # ─── Languages ───
     python312              # Python 3.12 with pip
+    go                     # Go toolchain
     jdk17                  # OpenJDK 17 (Java)
   ];
 
