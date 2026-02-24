@@ -95,6 +95,9 @@
     # ─── Media ───
     ffmpeg                 # audio/video encoding, decoding, streaming
 
+    # ─── Runtime manager ───
+    mise                   # polyglot runtime manager (node, python, etc.)
+
     # ─── Languages ───
     python312              # Python 3.12 with pip
   ];
