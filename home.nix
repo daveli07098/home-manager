@@ -79,8 +79,10 @@
     # ─── CI/CD & Git platforms ───
     gh                     # GitHub CLI
     act                    # local GitHub Actions runner
+    k6                     # load testing (HTTP, gRPC, etc.)
 
     # ─── Networking & debugging ───
+    cloudflared            # Cloudflare Tunnel daemon (zero-trust access)
     tcpdump                # network packet analyzer
     nmap                   # network scanner
     netcat                 # networking utility
@@ -100,6 +102,7 @@
 
     # ─── Languages ───
     python312              # Python 3.12 with pip
+    jdk17                  # OpenJDK 17 (Java)
   ];
 
   # ────────────────────────────────────────────────
