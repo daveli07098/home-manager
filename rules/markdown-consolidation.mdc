@@ -1,0 +1,16 @@
+---
+description: Prefer consolidating related Markdown into one file per domain
+globs: "**/*.md"
+alwaysApply: false
+---
+
+# Markdown Structure
+
+When creating or organizing Markdown documentation:
+
+1. **One file per domain/category** – Group related content into a single MD file rather than scattering across many small files.
+2. **Use headings for structure** – Use `##`, `###` etc. to organize sections within one file.
+3. **When to split** – Only create separate files when content belongs to a different domain or would make a single file unwieldy (>200–300 lines of unrelated topics).
+4. **Naming** – Use descriptive filenames that reflect the domain (e.g. `terraform-guide.md`, `api-reference.md`).
+
+**Example:** Instead of `getting-started.md`, `installation.md`, `config-options.md` for one product, prefer a single `product-name.md` with sections.

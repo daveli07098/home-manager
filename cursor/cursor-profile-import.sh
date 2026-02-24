@@ -2,7 +2,7 @@
 # Import Cursor profile from a tarball created by cursor-profile-export.sh
 # Run on new device after transferring the tarball.
 #
-# Imports: User settings (settings.json, keybindings.json), extensions, and skills.
+# Imports: User settings, extensions, skills, and rules (pushed to global Cursor).
 #
 # Usage: cursor-profile-import.sh TARBALL
 #   TARBALL  Path to the exported cursor-profile-*.tar.gz file
@@ -83,6 +83,12 @@ if [[ -f "$EXTRACT_DIR/extensions.txt" && -s "$EXTRACT_DIR/extensions.txt" ]]; t
       fi
     done < "$EXTRACT_DIR/extensions.txt"
   fi
+fi
+
+# ─── Rules → global Cursor ───
+if [[ -d "$EXTRACT_DIR/rules" && -x "$EXTRACT_DIR/rules/apply-agents-rules.sh" ]]; then
+  echo "Pushing rules to global Cursor..."
+  "$EXTRACT_DIR/rules/apply-agents-rules.sh" || true
 fi
 
 echo ""

@@ -1,0 +1,21 @@
+---
+description: Prefer python3.12 for venv creation in Nix environments
+globs: "**/*.py"
+alwaysApply: true
+---
+
+# Python Venv in Nix
+
+When creating Python virtual environments or running Python scripts in Nix/home-manager setups:
+
+1. **Use `python3.12`** – Avoid bare `python3` which may resolve to a different version.
+2. **Explicit paths when needed** – If `python3.12` might not be on PATH (e.g. nix shell), use:
+   - `~/.nix-profile/bin/python3.12`
+   - `$(which python3.12)`
+3. **venv creation example:**
+   ```bash
+   python3.12 -m venv .venv
+   # or with explicit path:
+   ~/.nix-profile/bin/python3.12 -m venv .venv
+   ```
+4. **Fallback order:** `python3.12` → `python3.9` → `python3`

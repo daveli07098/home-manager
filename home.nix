@@ -134,6 +134,8 @@
         hmreset = "nix-collect-garbage -d";
 
         skillsync   = "~/.config/home-manager/agents-skills/scripts/apply-agents-skills.sh --prune && ~/.config/home-manager/agents-skills/scripts/validate-skills.sh --user";
+        agentsync   = "~/.config/home-manager/rules/apply-agents-rules.sh";
+
         cursorexport = "~/.config/home-manager/cursor/cursor-profile-export.sh";
         cursorimport = "~/.config/home-manager/cursor/cursor-profile-import.sh";
       };

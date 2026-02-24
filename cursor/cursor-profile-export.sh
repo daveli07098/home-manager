@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Export Cursor profile (settings, keybindings, extensions list, skills) to a tarball.
+# Export Cursor profile (settings, keybindings, extensions list, skills, rules) to a tarball.
 # Run on source device. Transfer the tarball to new device and run cursor-profile-import.sh
 #
 # Usage: cursor-profile-export.sh [OUTPUT_FILE]
@@ -34,6 +34,21 @@ if [[ -d "$CURSOR_SKILLS" ]]; then
   cp -R "$CURSOR_SKILLS" "$EXPORT_DIR/"
 else
   echo "Warning: $CURSOR_SKILLS not found (skipping)"
+fi
+
+# ─── Repo rules (for import → global) ───
+REPO_RULES="${SCRIPT_DIR}/../rules"
+if [[ -d "$REPO_RULES" ]]; then
+  echo "Exporting rules..."
+  cp -R "$REPO_RULES" "$EXPORT_DIR/"
+fi
+
+# ─── Global rules backup (from state.vscdb) ───
+STATE_DB="${CURSOR_USER}/globalStorage/state.vscdb"
+if [[ -f "$STATE_DB" ]]; then
+  echo "Exporting global rules backup..."
+  sqlite3 "$STATE_DB" "SELECT value FROM ItemTable WHERE key = 'aicontext.personalContext';" 2>/dev/null > "$EXPORT_DIR/global-rules.txt" || true
+  [[ ! -s "$EXPORT_DIR/global-rules.txt" ]] && rm -f "$EXPORT_DIR/global-rules.txt"
 fi
 
 # ─── Extensions list ───
