@@ -3,13 +3,13 @@
   description = "My Home Manager flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-argocd-fix = {
       url = "github:nixos/nixpkgs/12f3e06fb8f4bd9db1965b3b24fb0171b75891a0";
       flake = false;
     };
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -29,6 +29,15 @@
               inherit system;
               config.allowUnfree = true;
             }).argocd;
+          })
+          # mitmproxy: relax deps + skip tests (pytest vs pyproject.toml conflict on current nixpkgs)
+          (final: prev: {
+            mitmproxy = prev.mitmproxy.overridePythonAttrs (old: {
+              pythonRelaxDeps = (old.pythonRelaxDeps or [ ]) ++ [
+                "aioquic" "asgiref" "pyparsing" "ruamel.yaml" "tornado" "wsproto"
+              ];
+              doCheck = false;
+            });
           })
         ];
       };    
