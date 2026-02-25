@@ -1,0 +1,13 @@
+---
+description: Preserve original comments when editing; they help understand the code
+alwaysApply: true
+---
+
+# Preserve Comments
+
+When editing or refactoring existing code:
+
+1. **Keep original comments** – Leave inline, block, and doc comments in place unless they are wrong or obsolete. They document intent, history, and non-obvious behavior.
+2. **Prefer updating over removing** – If a comment is outdated, update it to match the code rather than deleting it.
+3. **Don’t strip comments for “cleanliness”** – Avoid removing comments solely to reduce line count or for style; preserve them when they add understanding.
+4. **Remove only when** – Delete or replace comments only when they are misleading, redundant with clear code, or no longer accurate.
