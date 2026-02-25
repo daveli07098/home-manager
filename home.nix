@@ -97,6 +97,9 @@
     # ─── Media ───
     ffmpeg                 # audio/video encoding, decoding, streaming
 
+    # ─── Editors (CLI on PATH for vscodesync) ───
+    vscode                 # VS Code – provides `code` CLI for cursor-to-vscode-sync
+
     # ─── Runtime manager ───
     mise                   # polyglot runtime manager (node, python, etc.)
 
@@ -142,6 +145,7 @@
 
         cursorexport = "~/.config/home-manager/cursor/cursor-profile-export.sh";
         cursorimport = "~/.config/home-manager/cursor/cursor-profile-import.sh";
+        vscodesync   = "~/.config/home-manager/cursor/cursor-to-vscode-sync.sh";
       };
 
       initContent = ''
