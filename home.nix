@@ -65,6 +65,7 @@
     pgcli                  # nicer interactive PostgreSQL client
     mongosh                # modern MongoDB shell
     mongodb-tools          # mongoimport, mongodump, etc.
+    vi-mongo               # TUI for MongoDB (data viz & quick manipulation)
     mariadb.client         # MySQL/MariaDB client + mysqldump
     redis                  # Redis CLI
     sqlite                 # SQLite CLI (sqlite3)
@@ -86,6 +87,7 @@
     tcpdump                # network packet analyzer
     nmap                   # network scanner
     netcat                 # networking utility
+    sshpass                # non-interactive SSH password auth
     mitmproxy              # HTTP/HTTPS proxy & inspector
     ngrok                  # secure public tunnels
 
