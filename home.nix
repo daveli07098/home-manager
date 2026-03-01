@@ -16,7 +16,7 @@
   home.packages = with pkgs; [
     # ─── Core CLI & productivity ───
     # neovim                 # main editor
-    # ripgrep                # fast grep alternative (rg)
+    ripgrep                # fast grep alternative (rg)
     # fd                     # fast find alternative
     bat                    # cat with syntax highlighting
     eza                    # modern ls replacement
