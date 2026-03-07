@@ -12,6 +12,7 @@ CURSOR_USER="${HOME}/Library/Application Support/Cursor/User"
 CURSOR_SKILLS="${HOME}/.cursor/skills"
 CODE_USER="${HOME}/Library/Application Support/Code/User"
 COPILOT_SKILLS="${HOME}/.copilot/skills"
+CLAUDE_RULES="${HOME}/.claude/rules"
 DRY_RUN=false
 
 for arg in "$@"; do
@@ -60,8 +61,8 @@ else
   fi
 fi
 
-# ─── Rules → ~/.copilot/skills/cursor-rules ───
-# Concatenate rules (*.mdc) into a single Copilot skill.
+# ─── Rules → ~/.copilot/skills/rules-sync-from-cursor and ~/.claude/rules ───
+# Concatenate rules (*.mdc) for both Copilot skills and Claude/compatible editors.
 if [[ ! -d "$RULES_DIR" ]]; then
   echo "Note: No rules dir at $RULES_DIR (skipping)"
 else
@@ -70,19 +71,38 @@ else
   if [[ ${#MDC_FILES[@]} -eq 0 ]]; then
     echo "Note: No *.mdc files in $RULES_DIR"
   else
-    echo "Syncing ${#MDC_FILES[@]} rule(s) → $COPILOT_SKILLS/cursor-rules..."
-    RULES_OUT="${COPILOT_SKILLS}/cursor-rules"
+    content=""
+    for f in $(printf '%s\n' "${MDC_FILES[@]}" | sort); do
+      content+=$'\n\n'
+      content+="$(cat "$f")"
+    done
+    merged="${content#[$'\n\n']}"
+
+    echo "Syncing ${#MDC_FILES[@]} rule(s) → $COPILOT_SKILLS/rules-sync-from-cursor..."
+    RULES_OUT="${COPILOT_SKILLS}/rules-sync-from-cursor"
     run mkdir -p "$RULES_OUT"
     if [[ "$DRY_RUN" == true ]]; then
-      echo "[dry-run] would write merged rules to $RULES_OUT/SKILL.md"
+      echo "[dry-run] would write to $RULES_OUT/SKILL.md"
     else
-      content=""
-      for f in $(printf '%s\n' "${MDC_FILES[@]}" | sort); do
-        content+=$'\n\n'
-        content+="$(cat "$f")"
-      done
-      printf '%s' "${content#[$'\n\n']}" > "${RULES_OUT}/SKILL.md"
-      echo "  Wrote cursor-rules/SKILL.md"
+      printf '%s' "$merged" > "${RULES_OUT}/SKILL.md"
+      echo "  Wrote rules-sync-from-cursor/SKILL.md"
+    fi
+
+    echo "Syncing ${#MDC_FILES[@]} rule(s) → $CLAUDE_RULES..."
+    run mkdir -p "$CLAUDE_RULES"
+    if [[ "$DRY_RUN" == true ]]; then
+      echo "[dry-run] would write to $CLAUDE_RULES/rules-sync-from-cursor.instructions.md"
+    else
+      {
+        echo '---'
+        echo 'name: Rules from Cursor (synced)'
+        echo 'description: Global rules synced from Cursor'
+        echo 'applyTo: "**"'
+        echo '---'
+        echo ''
+        printf '%s' "$merged"
+      } > "${CLAUDE_RULES}/rules-sync-from-cursor.instructions.md"
+      echo "  Wrote rules-sync-from-cursor.instructions.md"
     fi
   fi
 fi
