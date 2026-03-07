@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Sync Cursor profile (settings + extensions) to VS Code so both editors stay aligned.
-# Rules and skills are Cursor-only and have no VS Code equivalent.
+# Sync Cursor profile (settings, extensions, skills, rules → ~/.copilot/skills) to VS Code.
 #
 # Usage: cursor-to-vscode-sync.sh [--dry-run]
 #   --dry-run  Print what would be done, do not copy or install.
@@ -8,8 +7,11 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RULES_DIR="${SCRIPT_DIR}/../rules"
 CURSOR_USER="${HOME}/Library/Application Support/Cursor/User"
+CURSOR_SKILLS="${HOME}/.cursor/skills"
 CODE_USER="${HOME}/Library/Application Support/Code/User"
+COPILOT_SKILLS="${HOME}/.copilot/skills"
 DRY_RUN=false
 
 for arg in "$@"; do
@@ -35,6 +37,54 @@ else
       run cp -a "$CURSOR_USER/$f" "$CODE_USER/$f"
     fi
   done
+fi
+
+# ─── Skills → ~/.copilot/skills ───
+# Mirror Cursor skills to Copilot's user skills folder.
+if [[ ! -d "$CURSOR_SKILLS" ]]; then
+  echo "Note: No Cursor skills at $CURSOR_SKILLS (skipping Copilot skills)"
+else
+  COUNT=$(find "$CURSOR_SKILLS" -name "SKILL.md" -type f 2>/dev/null | wc -l | tr -d ' ')
+  if [[ "$COUNT" -eq 0 ]]; then
+    echo "Note: No SKILL.md files found under $CURSOR_SKILLS"
+  else
+    echo "Syncing $COUNT Cursor skill(s) → $COPILOT_SKILLS..."
+    run mkdir -p "$COPILOT_SKILLS"
+    if command -v rsync &>/dev/null; then
+      run rsync -a --delete "$CURSOR_SKILLS/" "$COPILOT_SKILLS/"
+    else
+      run rm -rf "$COPILOT_SKILLS"/*
+      run cp -a "$CURSOR_SKILLS"/* "$COPILOT_SKILLS/" 2>/dev/null || true
+    fi
+    echo "  Mirrored to $COPILOT_SKILLS"
+  fi
+fi
+
+# ─── Rules → ~/.copilot/skills/cursor-rules ───
+# Concatenate rules (*.mdc) into a single Copilot skill.
+if [[ ! -d "$RULES_DIR" ]]; then
+  echo "Note: No rules dir at $RULES_DIR (skipping)"
+else
+  shopt -s nullglob
+  MDC_FILES=("$RULES_DIR"/*.mdc)
+  if [[ ${#MDC_FILES[@]} -eq 0 ]]; then
+    echo "Note: No *.mdc files in $RULES_DIR"
+  else
+    echo "Syncing ${#MDC_FILES[@]} rule(s) → $COPILOT_SKILLS/cursor-rules..."
+    RULES_OUT="${COPILOT_SKILLS}/cursor-rules"
+    run mkdir -p "$RULES_OUT"
+    if [[ "$DRY_RUN" == true ]]; then
+      echo "[dry-run] would write merged rules to $RULES_OUT/SKILL.md"
+    else
+      content=""
+      for f in $(printf '%s\n' "${MDC_FILES[@]}" | sort); do
+        content+=$'\n\n'
+        content+="$(cat "$f")"
+      done
+      printf '%s' "${content#[$'\n\n']}" > "${RULES_OUT}/SKILL.md"
+      echo "  Wrote cursor-rules/SKILL.md"
+    fi
+  fi
 fi
 
 # ─── Extensions ───
@@ -83,5 +133,5 @@ else
 fi
 
 echo ""
-echo "Done. Restart VS Code to apply settings."
-echo "Note: Rules and skills are Cursor-only; they are not synced to VS Code."
+echo "Done. Restart VS Code to apply settings and Copilot skills."
+echo "Note: Repo-level .github/copilot-instructions.md can be added per project."
