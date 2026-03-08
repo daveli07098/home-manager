@@ -110,6 +110,7 @@
     nodejs_22              # Node.js 22 (LTS)
     go                     # Go toolchain
     jdk17                  # OpenJDK 17 (Java)
+    maven                  # Apache Maven build tool
   ];
 
   # ────────────────────────────────────────────────
